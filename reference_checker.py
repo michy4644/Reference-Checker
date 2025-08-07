@@ -125,11 +125,14 @@ def check_reference(reference):
             title_score = fuzzy_match(ref_title, brave_title)
             author_score = fuzzy_match(ref_surnames, brave_snippet_surnames)
 
-            if title_score > 75 and author_score > 65:
+            if title_score > 85 and author_score > 65:
                 return "🟩", f"Brave search: matched title and author surname. Source: [{brave_title}]({brave_url})"
-            elif title_score > 75:
-                if crossref_status == "🟥":  # only upgrade red to amber from Brave title only
-                    crossref_status, crossref_msg = "🟧", f"Brave search: matched title only. Source: [{brave_title}]({brave_url})"
+            elif title_score > 85 and author_score < 30:
+                # Title matches but author surnames differ a lot — treat as amber but warn user
+                if crossref_status == "🟥":
+                    crossref_status, crossref_msg = "🟧", (
+                        f"Brave search: title similar but author surnames differ significantly. Source: [{brave_title}]({brave_url})"
+                    )
 
     return crossref_status, crossref_msg
 
